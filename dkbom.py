@@ -10,7 +10,6 @@ import csv
 import sys
 import re
 
-
 if len(sys.argv) != 4:
     print("Usage ", __file__, "<generic_netlist.xml> <output.csv> <quantity>", file=sys.stderr)
     sys.exit(1)
@@ -54,7 +53,7 @@ out = csv.writer(f, lineterminator='\n', delimiter=',', quotechar='\"', quoting=
 def writerow( acsvwriter, columns ):
     utf8row = []
     for col in columns:
-        utf8row.append( str(col).encode('utf8') )
+        utf8row.append( unicode(col).encode('utf-8') )
     acsvwriter.writerow( utf8row )
 
 row = []
