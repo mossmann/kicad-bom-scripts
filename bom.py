@@ -70,6 +70,9 @@ def ref_cmp(a, b):
     bi = int(re.split('[A-Z]+', b)[1])
     return cmp(ai, bi)
 
+# Output header row
+writerow( out, columns )
+
 # Output component information organized by group, aka as collated:
 item = 0
 for group in grouped:
