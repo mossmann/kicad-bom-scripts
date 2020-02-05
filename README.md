@@ -10,8 +10,8 @@ Parts with "DNP" in the "Note" field are ignored.
 
 Usage:
 
-1) First step is to generate a BOM in kicad using no plugins. This will generate a .xml file in the project directory
-
+1) First step is to generate a BOM in kicad using the kicad_netlist_reader plugin (if you are using a version of Kicad that is older than Kicad 5, generatre the BOM without using a plugin). This will generate a .xml file in the project directory
+ 
 2) Next give the command to convert the .xml file to a .csv file.
 
 	 $: ~/kicad-bom-scripts/bom.py(or dkbom.py for digikey friendly BOM) <file.xml> <file.csv> <quantity>
