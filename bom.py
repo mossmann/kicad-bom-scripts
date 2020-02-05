@@ -15,8 +15,10 @@ import argparse
 def main():
     # Set up a simple argument parser.
     parser = argparse.ArgumentParser(description="KiCad BOM script")
-    parser.add_argument('-d', dest='digikey', action='store_true', 
+    parser.add_argument('-d', dest='digikey', action='store_true',
                         help="Truncate references for Digi-Key orders")
+    parser.add_argument('-s', dest='single', action='store_true',
+                        help="Output single reference per row")
     parser.add_argument('infile', metavar='<filename>', type=str,
                         help='input xml BOM file from KiCad')
     parser.add_argument('-q', dest='quantity', type=int, default=1,
@@ -60,7 +62,10 @@ def main():
 
     # Get all of the components in groups of matching parts + values
     # (see kicad_netlist_reader.py)
-    grouped = net.groupComponents(components)
+    if args.single:
+        grouped = [[c] for c in components]
+    else:
+        grouped = net.groupComponents(components)
 
     # Output header row
     out.writerow(columns)
