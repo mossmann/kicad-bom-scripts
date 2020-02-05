@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # adapted from bom_csv_grouped_by_value.py
 
@@ -8,23 +8,9 @@ from __future__ import print_function
 import kicad_netlist_reader
 import csv
 import sys
-import re
+import natsort
 import os
 import argparse
-
-# override csv.writer's writerow() to support utf8 encoding:
-def writerow( acsvwriter, columns ):
-    utf8row = []
-    for col in columns:
-        utf8row.append( unicode(col).encode('utf-8') )
-    acsvwriter.writerow( utf8row )
-
-
-def ref_cmp(a, b):
-    ai = int(re.split('[A-Z]+', a)[1])
-    bi = int(re.split('[A-Z]+', b)[1])
-    return cmp(ai, bi)
-
 
 def main():
     # Set up a simple argument parser.
@@ -77,7 +63,7 @@ def main():
     grouped = net.groupComponents(components)
 
     # Output header row
-    writerow( out, columns )
+    out.writerow(columns)
 
     # Output component information organized by group, aka as collated:
     item = 0
@@ -90,9 +76,8 @@ def main():
         for component in group:
             refs.append(component.getRef())
             c = component
-        refs.sort(cmp=ref_cmp)
 
-        ref_string = ", ".join(refs)
+        ref_string = ", ".join(natsort.natsorted(refs))
         if args.digikey and len(ref_string) > 48:
                 ref_string = ref_string[:45] + "..."
 
@@ -111,7 +96,7 @@ def main():
         for field in columns[7:]:
             row.append( net.getGroupField(group, field) );
 
-        writerow( out,  row  )
+        out.writerow(row)
 
     f.close()
 
