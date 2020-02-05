@@ -2,6 +2,11 @@
 #
 # validate-pos.sh:
 #   check for discrepancies between footprint position file and bill of materials
+#
+# The footprint position file is generated from the Fabrication Outputs
+# menu of KiCad's pcbnew.
+#
+# The bill of materials file should be generated with ./bom.py -s.
 
 POS=${1}
 BOM=${2}

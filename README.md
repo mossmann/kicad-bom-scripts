@@ -3,21 +3,34 @@ scripts for bill of materials generation from KiCad
 
 These are minor modifications of scripts provided with the KiCad source.
 
-bom.py is for general purpose xml->csv
-dkbom.py is for Digi-Key orders
+## bom.py usage
+
+This script generates a bill of materials file in .csv format useful for ordering parts.
 
 Parts with "DNP" in the "Note" field are ignored.
 
-Usage:
+1) Generate a BOM in KiCad's eeschema using the kicad_netlist_reader plugin (if you are using a version of KiCad that is older than KiCad 5, generate the BOM without using a plugin). This will generate a .xml file in the project directory.
 
-1) First step is to generate a BOM in kicad using no plugins. This will generate a .xml file in the project directory
+2) Convert the .xml file to a .csv file.
 
-2) Next give the command to convert the .xml file to a .csv file.
+```
+$ bom.py <file.xml>
+```
 
-	 $: ~/kicad-bom-scripts/bom.py(or dkbom.py for digikey friendly BOM) <file.xml> <file.csv> <quantity>
+### options
 
-3) Open the new .csv file in Libreoffice, Excel, etc.. Veryify that all fields appear to be in the right places. 
+* `-q` allows you to specify a quantity
+* `-d` truncates lists of reference designators for Digi-Key order compatibility
+* `-s` outputs a single reference designator per row, required for validate-pos.sh
 
-4) If you are using Digikey you will need to save this .csv file as a .xls file
+## validate-pos.sh usage
 
-5) Upload to the website of your favorite purveyor of electronic components.
+This script checks for discrepancies between a footprint position file and a bill of materials.
+
+1) Generate the footprint position file from the Fabrication Outputs menu of KiCad's pcbnew.
+2) Generate the bill of materials file with `bom.py -s` (see above).
+3) Check the files for discrepancies:
+
+```
+$ validate-pos.sh <file.pos> <bom.csv>
+```
