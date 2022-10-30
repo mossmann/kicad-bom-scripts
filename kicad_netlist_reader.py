@@ -582,6 +582,8 @@ class netlist():
                     exclude = True
                 if c.getField( "Note" ) == 'DNP':
                     exclude = True
+                if c.getField( "DNP" ) == 'DNP':
+                    exclude = True
 
             if not exclude:
                 ret.append(c)
