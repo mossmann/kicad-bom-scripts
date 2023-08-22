@@ -17,6 +17,8 @@ def main():
     parser = argparse.ArgumentParser(description="KiCad BOM script")
     parser.add_argument('-d', dest='digikey', action='store_true',
                         help="Truncate references for Digi-Key orders")
+    parser.add_argument('-j', dest='jlcpcb', action='store_true',
+                        help="Output JLCPCB format")
     parser.add_argument('-s', dest='single', action='store_true',
                         help="Output single reference per row")
     parser.add_argument('infile', metavar='<filename>', type=str,
@@ -53,7 +55,10 @@ def main():
     columnset = compfields | partfields     # union
 
     # prepend an initial 'hard coded' list and put the enchillada into list 'columns'
-    columns = ['Item', 'Qty', 'Reference(s)', 'Value', 'LibPart', 'Footprint', 'Datasheet'] + sorted(list(columnset))
+    if args.jlcpcb:
+        columns = ['Comment', 'Designator', 'Footprint', 'JLCPCB Part#']
+    else:
+        columns = ['Item', 'Qty', 'Reference(s)', 'Value', 'LibPart', 'Footprint', 'Datasheet'] + sorted(list(columnset))
 
     # Create a new csv writer object to use as the output formatter
     out = csv.writer(f, lineterminator='\n', delimiter=',', quotechar='\"', quoting=csv.QUOTE_MINIMAL)
@@ -86,16 +91,21 @@ def main():
         if args.digikey and len(ref_string) > 48:
                 ref_string = ref_string[:45] + "..."
 
-        # Fill in the component groups common data
-        # columns = ['Item', 'Qty', 'Reference(s)', 'Value', 'LibPart', 'Footprint', 'Datasheet'] + sorted(list(columnset))
-        item += 1
-        row.append( item )
-        row.append( len(group) * args.quantity )
-        row.append( ref_string )
-        row.append( c.getValue() )
-        row.append( c.getLibName() + ":" + c.getPartName() )
-        row.append( net.getGroupFootprint(group) )
-        row.append( net.getGroupDatasheet(group) )
+        if args.jlcpcb:
+            row.append( c.getValue() )
+            row.append( ref_string )
+            row.append( net.getGroupFootprint(group) )
+        else:
+            # Fill in the component groups common data
+            # columns = ['Item', 'Qty', 'Reference(s)', 'Value', 'LibPart', 'Footprint', 'Datasheet'] + sorted(list(columnset))
+            item += 1
+            row.append( item )
+            row.append( len(group) * args.quantity )
+            row.append( ref_string )
+            row.append( c.getValue() )
+            row.append( c.getLibName() + ":" + c.getPartName() )
+            row.append( net.getGroupFootprint(group) )
+            row.append( net.getGroupDatasheet(group) )
 
         # from column 7 upwards, use the fieldnames to grab the data
         for field in columns[7:]:
